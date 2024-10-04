@@ -102,10 +102,9 @@ printLanguages() {
 }
 
 copyDrivers() {
-	echo -e "Copying VMware network driver for insertion into installer"
 	echo -e "Mounting VMware Tools iso"
 	hdiutil attach "${toolsIso}" || return 1
-	echo -e "Copy driver folder to temp directory"
+	echo -e "Copying vmxnet3 driver from Tools ISO to temp directory"
 	cp -r "/Volumes/VMware Tools/vmxnet3" "${wDir}/vmxnet3"
 	echo -e "Dismounting VMware Tools ISO"
 	hdiutil detach "/Volumes/VMware Tools"
