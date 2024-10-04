@@ -14,7 +14,7 @@ So... here's the other way.
 
 ## What's the difference between 24H2_esd2iso and w11arm_esd2iso?
 
-Both have some similar heritage (and needs for their existence). The big differenses are:
+Both have some similar heritage (and needs for their existence). The big differences are:
 
 * 24H2_esd2iso only requires the installation of VMware Fusion. w11arm_esd2iso requires several
   open source utilities to be installed.
@@ -27,11 +27,12 @@ Both have some similar heritage (and needs for their existence). The big differe
 
 ## Prerequisites 
 
-Apple Silicon Macs running macOS 13 or later. Fusion 13.5 or later must be installed as /Applications/Vmware Fusion.app.   
+* Apple Silicon Macs running macOS 13 or later.
+* VMware Fusion 13.5 or later must be installed and located at /Applications/VMware Fusion.app.   
 
 ## Installation and Use 
 
-* Download the file 24H2_esd2iso found on this repository on GitHub.
+* Download the file 24H2_esd2iso found on this repository on GitHub (you can right click on the file and download it directly from here).
 * Move the file 24H2_esd2iso to a location of your choice (preferably an empty folder where you will build your ISO)
 * Open the macOS Terminal app, and cd to the empty folder.
 * Change permissions on 24H2_esd2iso to make it executable (it does not require root permissions).
