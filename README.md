@@ -10,7 +10,7 @@ It was born out of necessity for users of VMware Fusion on Apple Silicon Macs. W
 Fusion's routines to "Download Windows from Microsoft". Another way had to be found to easily
 download Windows until VMware fixes their bugs. 
 
-So, And here's the other way.
+So... here's the other way.
 
 ## What's the difference between 24H2_esd2iso and w11arm_esd2iso?
 
