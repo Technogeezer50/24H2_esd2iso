@@ -32,8 +32,9 @@ Both have some similar heritage (and needs for their existence). The big differe
 
 ## Installation and Use 
 
-* Download this project from GitHub using the "Code" button.
-* Move the file 24H2_esd2iso to a location of your choice (preferably an empty folder where you will build your ISO)
+* Download this project from GitHub using the "<>Code" button, and selecting "Download ZIP" from the pull-down.
+* Unzip the downloaded ZIP file.
+* Move or copy the file 24H2_esd2iso to a location of your choice (preferably an empty folder where you will build your ISO)
 * Open the macOS Terminal app, and cd to the empty folder.
 * Change permissions on 24H2_esd2iso to make it executable (it does not require root permissions).
 * Run 24H2_esd2iso and follow all prompte.
