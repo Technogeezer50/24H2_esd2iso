@@ -1,0 +1,349 @@
+#!/bin/bash
+#
+# fusion_esd2iso - download and convert Microsoft ESD files for Windows 11 ARM to ISO
+#                  using the VMware Fusion built-in command vmw_esd2iso
+#
+# Copyright (C) 2024 Paul Rockwell
+#
+# This program is free software; you can redistribute it and/or modify it to suit
+# your needs.
+# All I ask is that you provide proper attribution.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# 
+
+
+readonly versionID="v1.0.1 (20241004)"
+readonly version="fusion_esd2iso ${versionID}\n"
+readonly minDiskSpace=10
+
+declare -a lTags=( "bg-bg" 					"cs-cz" 
+					"da-dk" 				"de-de" 
+					"el-gr" 				"en-gb"
+					"en-us" 				"es-es" 
+					"es-mx" 				"et-ee" 
+					"fi-fi" 				"fr-ca"
+					"fr-fr" 				"he-il" 
+					"hr-hr" 				"hu-hu" 
+					"it-it" 				"ja-jp"
+					"ko-kr" 				"lt-lt" 
+					"lv-lv" 				"nb-no" 
+					"nl-nl" 				"pl-pl"
+					"pt-br" 				"pt-pt" 
+					"ro-ro" 				"ru-ru" 
+					"sk-sk" 				"sl-si"
+					"sr-latn-rs" 			"sv-se" 
+					"th-th" 				"tr-tr" 
+					"uk-ua"					"zh-cn" 
+					"zh-tw" )
+declare -a lDesc=( "Bulgarian (Bulgaria)"	"Czech (Czechia)"
+					"Danish (Denmark)",		"German (Germany)"
+					"Greek (Greece)" 		"English (United Kingdom)"
+					"English (United States)"	"Spanish (Spain)"
+					"Spanish (Mexico)"		"Estonian (Estonia)"
+					"Finnish (Finland)"		"French (Canada)"
+					"French (France)"		"Hebrew (Israel)"
+					"Croatian (Croatia)"	"Hungarian (Hungary)"
+					"Italian (Italy)"		"Japanese (Japan)"
+					"Korean (Korea)"		"Lithuanian (Lithuania)"
+					"Latvian (Latvia)"		"Norwegian Bokmål (Norway)"
+					"Dutch (Netherlands)"	"Polish (Poland)"
+					"Portuguese (Brazil)"	"Portuguese (Portugal)"
+					"Romanian (Romania)"	"Russian (Russia)"
+					"Slovak (Slovakia)"		"Slovenian (Slovenia)"
+					"Serbian (Latin, Serbia)"	"Swedish (Sweden)"
+					"Thai (Thailand)"		"Turkish (Turkey)"
+					"Ukrainian (Ukraine)"	"Chinese (China)"
+					"Chinese (Taiwan)")
+declare esdName
+declare shaHash=""
+declare editionName=""
+declare esdLang=""
+declare tempDir="$(pwd)"
+declare fusionApp="/Applications/VMware Fusion.app"
+declare toolsIso="${fusionApp}/Contents/Library/isoimages/arm64/windows.iso"
+declare utilPath="${fusionApp}/Contents/Library/vmw_esd2iso"
+declare retVal
+
+usage() {
+        echo -e "Usage:\n"
+        echo -e "$0 [-Vh]"
+        echo -e "\nOptions:"
+        echo -e "\t-h\tPrint usage and exit"
+        echo -e "\t-V\tPrint program version and exit"
+        echo
+}
+abortProg() {
+	local -r errCode=$1
+	local -r errRoutine=$2
+	local -r errInfo=$3
+
+	echo -e "[ERROR] $errRoutine failed, error code $errCode"
+	echo -e "$errInfo"
+	echo -e "Program aborting"
+	exit 1
+}
+
+
+printLanguages() {
+	local i
+	
+	printf '\n%s\n\n' "Available Windows 11 ARM languages are:"
+	printf '%-15s %-20s\n' "Language tag"	"Language"
+	printf '%-15s %-20s\n' "------------" "--------------------"
+    for (( i=1; i<=${#lTags[@]}; i++ )); do
+    	printf '%-15s %-20s\n' ${lTags[$i]} "${lDesc[$i]}"
+    done
+    return 0
+}
+
+copyDrivers() {
+	echo -e "Copying VMware network driver for insertion into installer"
+	echo -e "Mounting VMware Tools iso"
+	hdiutil attach "${toolsIso}" || return 1
+	echo -e "Copy driver folder to temp directory"
+	cp -r "/Volumes/VMware Tools/vmxnet3" "${wDir}/vmxnet3"
+	echo -e "Dismounting VMware Tools ISO"
+	hdiutil detach "/Volumes/VMware Tools"
+	return $?
+}
+
+setupEsdDownload(){
+   	
+	local answer
+	local found
+   
+    #
+	# Ask for the ESD edition
+	#
+
+	echo -e "\nWhich Edition of Windows 11 ARM do you wish to download?"
+
+	while [[ -z ${editionName} ]]; do
+
+		echo -e "Enter 'p' to create a Professional Edition ISO"
+		echo -e "          (includes Professional and Home Editions), or"
+		echo -e "      'e' to create a Enterprise Edition ISO"
+		echo -e "          (includes Professional and Enterprise Editions), or"
+		echo -e "      'q' to exit the program without creating an ISO: \c"
+		read answer
+
+		case ${answer} in
+			p | P )
+				editionName="Professional"
+				;;
+			e | E )
+				editionName="Enterprise"
+				;;
+			q | Q )
+				return 1
+				;;
+			* )
+				echo -e "Invalid response. Please try again.\n"
+				;;
+		esac
+	done
+    #
+	# Ask for the ESD language
+	#
+	
+	echo -e "\n\nSelect a language for your Windows 11 ARM ${editionName} ISO"
+# 
+	while [[ -z ${esdLang} ]]; do
+		echo -e "Enter a Windows language tag (example: 'en-us'), or"
+		echo -e "     'p' to print the list of available languages, or"
+		echo -e "     'q' to exit the program without creating an ISO: \c"
+		read answer
+
+		case ${answer} in
+			p | P )
+				printLanguages
+				continue
+				;;
+			q | Q )
+				return 1
+				;;
+			* )
+				found=0
+				for i in ${lTags[*]}; do
+					if [[ ${answer} == $i ]]; then 
+						found=1; 
+						break
+					fi;
+				done
+
+				if (( found == 0 )); then
+				  echo -e "${answer} is not a valid language tag. Please try again"
+				else
+				  esdLang=${answer}
+				fi
+				;;
+		esac
+	done
+echo -e "Getting info on ESD from Microsoft"
+	"${utilPath}" getesdurl -- edition "${editionName}" --lang ${esdLang} | tee "${wDir}/geturl.out"
+	if grep -q  SUCCESS "${wDir}/geturl.out"; then
+	    shaHash=$(awk '/^SHA1/ {print $3}' "${wDir}"/geturl.out)
+	    return 0
+	else
+		return 2
+	fi
+}
+
+downloadEsd() {
+
+	#---------------
+	# Download the ESD from Microsoft
+	#---------------
+	echo -e "Downloading ESD from Microsoft"
+	"${utilPath}" getesd --edition ${editionName} --lang ${esdLang} | tee ${wDir}/getesd.out
+	if grep -q  SUCCESS "${wDir}/getesd.out"; then
+		esdName=$(awk '/^ESD:/ {print $2}' "${wDir}"/getesd.out)
+		esdName=$(basename "$esdName")
+		return 0
+	else
+		return 1
+	fi
+}
+
+
+buildIso(){
+	echo -e "Building ISO"
+	"${utilPath}" generateiso --esd ./"${esdName}" --drivers="${wDir}/vmxnet3" | tee ${wDir}/generateiso.out
+	if grep -q  SUCCESS "${wDir}/generateiso.out"; then
+		return 0
+	else
+		return 1
+	fi
+
+}
+
+
+#-------------------
+#
+# Start of program
+#
+#-------------------
+
+export LC_MESSAGES="C"
+
+#-------------------
+# 
+# Process arguments (the -d option is undocumented and enables debug mode)
+# 
+#-------------------
+
+while getopts "hV" opt; do
+  case ${opt} in
+    h)
+		usage
+    	exit 1
+    	;;
+	V)
+    	echo -e $version
+    	exit 1
+    	;;
+    
+    \?)
+    	echo -e "[ERROR] Invalid option: -$OPTARG\n"
+    	usage
+    	exit 1
+    	;;
+    esac
+done
+shift "$((OPTIND-1))"
+
+
+#-------------------
+# Check number of arguments
+# No arguments are allowed
+#-------------------
+
+if (( $# > 0 )); then
+	echo -e "[ERROR] Too many arguments"
+	usage
+	exit 1
+fi
+
+#-------------------
+# Check if required utilities are installed
+#-------------------
+
+	
+if [[ ! -d "${fusionApp}" ]]; then
+	abortProg 2 "Fusion app check" "\t${fusionApp} not found"
+fi
+
+#---------------
+# Normal processing
+#---------------
+	
+freeSpace=$(df -g "$tempDir" | awk '/^\/dev/ {print $4}' ) 
+
+if (( freeSpace < minDiskSpace )) ; then
+	abortProg 28 "Disk space check" "$0 requires $minDiskSpace GB of free disk space in the folder $tempDir\n\tand you have \n$freeSpace GB remaining."
+fi
+wDir=$(mktemp -q -d "${tempDir}/esd2iso_temp.XXXXXX")
+retVal=$?
+if (( $retVal != 0 )); then
+	abortProg 2 "" "Unable to create temp directory"
+fi
+setupEsdDownload
+retVal=$?
+case $retVal in
+	0)
+		;;
+	1)
+		echo -e "Progran exiting. No ISO was created"
+		rm -rf "${wDir}"
+		exit 0
+		;;
+	*)
+		rm -rf "${wDir}"
+		abortProg 2 "setupEsdDownload" "vmw_esd2iso geturl didn't return a SHA1 hash for the desired edition/language"
+		;;
+esac
+	
+downloadEsd
+retVal=$?
+if (( $retVal != 0 )); then
+	rm -rf "${wDir}"
+	abortProg $retVal "downloadEsd" "vmw_esd2iso getesd failed"
+fi
+	
+
+echo -e "Validating download (this may take a minute or so)"
+calcHash=$(shasum "./${esdName}" | awk '{print $1}')
+if [[ ${calcHash} != ${shaHash} ]]; then 
+	rm -rf "${wDir}"
+    abortProg 1 "ESD validation" "Expected hash = ${shaHash}\n\tCalculated hash = ${calcHash}"
+else 
+	echo -e "Download validated."
+fi
+
+copyDrivers
+retVal=$?
+if (( $retVal != 0 )); then
+	chmod 755 "${wDir}/vmxnet3"
+	rm -rf "${wDir}" 
+    abortProg 1 "VMware Tools mount" "Tools ISO didn't mount or dismount properly"
+fi
+
+
+buildIso
+retVal=$?
+if (( $retVal != 0 )); then
+	chmod 755 "${wDir}/vmxnet3"
+	rm -rf "${wDir}" 
+    abortProg 1 "ISO build" "\tvmw_esd2iso geturl didn't complete successfully'"
+fi
+echo -e "\nCleaning up..."
+chmod 755 "${wDir}/vmxnet3"
+rm -rf "${wDir}"
+rm -rf "./${esdName}"
+echo -e "All done!"
+exit 0
