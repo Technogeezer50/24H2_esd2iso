@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# fusion_esd2iso - download and convert Microsoft ESD files for Windows 11 ARM to ISO
+# 24H2_esd2iso - download and convert Microsoft ESD files for Windows 11 ARM to ISO
 #                  using the VMware Fusion built-in command vmw_esd2iso
 #
 # Copyright (C) 2024 Paul Rockwell
@@ -11,14 +11,13 @@
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 #
 # 
 
 
-readonly versionID="v1.0.1 (20241004)"
-readonly version="fusion_esd2iso ${versionID}\n"
+readonly versionID="v1.0.0 (20241004)"
+readonly version="24H2_esd2iso ${versionID}\n"
 readonly minDiskSpace=10
 
 declare -a lTags=( "bg-bg" 					"cs-cz" 
