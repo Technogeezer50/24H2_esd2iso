@@ -16,7 +16,7 @@
 # 
 
 
-readonly versionID="v1.0.0 (20241004)"
+readonly versionID="v1.0.1 (20241007)"
 readonly version="24H2_esd2iso ${versionID}\n"
 readonly minDiskSpace=10
 
@@ -183,7 +183,7 @@ setupEsdDownload(){
 		esac
 	done
 echo -e "Getting info on ESD from Microsoft"
-	"${utilPath}" getesdurl -- edition "${editionName}" --lang ${esdLang} | tee "${wDir}/geturl.out"
+	"${utilPath}" getesdurl --edition "${editionName}" --lang ${esdLang} | tee "${wDir}/geturl.out"
 	if grep -q  SUCCESS "${wDir}/geturl.out"; then
 	    shaHash=$(awk '/^SHA1/ {print $3}' "${wDir}"/geturl.out)
 	    return 0
