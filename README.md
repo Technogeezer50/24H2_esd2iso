@@ -7,23 +7,10 @@ This utility uses command line tools found in VMware Fusion 13.5 and later to do
 installation ISO. 
 
 It was born out of necessity for users of VMware Fusion on Apple Silicon Macs. Windows 11 24H2 broke
-Fusion's routines to "Download Windows from Microsoft". Another way had to be found to easily
-download Windows until VMware fixes their bugs. 
+Fusion's routines to "Get Windows from Microsoft". Another way had to be found to easily
+download Windows until VMware fixes the issue. 
 
 So... here's the other way.
-
-## What's the difference between 24H2_esd2iso and w11arm_esd2iso?
-
-Both have some similar heritage (and needs for their existence). The big differences are:
-
-* 24H2_esd2iso only requires the installation of VMware Fusion. w11arm_esd2iso requires several
-  open source utilities to be installed.
-* 24h2_esd2iso injects the VMware vmxnet3 virtual network driver into the Windows installation ISO 
-  (which makes it easier to go through the Windows OOBE setup as a network will be found). w11arm_esd2iso
-  does not install any of the VMware drivers, so network drivers must be installed manually during the
-  Windows Setup process.
-* 24H2_esd2iso only works on Apple Silicon Macs. w11arm_esd2iso works on Macs and Linux (both Intel
-  and ARM architectures).
 
 ## Prerequisites 
 
@@ -50,6 +37,18 @@ like there is for w11arm_esd2iso. If the transfer doesn't complete, you'll need 
 file to download again. Trying to keep things simple and not require open source utilities (such as 
 aria2) means that the restart capability isn't available. 
 
+## What's the difference between 24H2_esd2iso and w11arm_esd2iso?
+
+Both have some similar heritage (and needs for their existence). The big differences are:
+
+* 24H2_esd2iso only requires the installation of VMware Fusion. w11arm_esd2iso requires several
+  open source utilities to be installed.
+* 24h2_esd2iso injects the VMware vmxnet3 virtual network driver into the Windows installation ISO 
+  (which makes it easier to go through the Windows OOBE setup as a network will be found). w11arm_esd2iso
+  does not install any of the VMware drivers, so network drivers must be installed manually during the
+  Windows Setup process.
+* 24H2_esd2iso only works on Apple Silicon Macs. w11arm_esd2iso works on Macs and Linux (both Intel
+  and ARM architectures).
 
 ## Licensing
 
