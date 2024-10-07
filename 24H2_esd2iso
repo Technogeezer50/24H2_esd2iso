@@ -200,7 +200,7 @@ downloadEsd() {
 	echo -e "Downloading ESD from Microsoft"
 	"${utilPath}" getesd --edition ${editionName} --lang ${esdLang} | tee ${wDir}/getesd.out
 	if grep -q  SUCCESS "${wDir}/getesd.out"; then
-		esdName=$(awk '/^ESD:/ {print $2}' "${wDir}"/getesd.out)
+		esdName=$(awk '/^ESD:/ {print $2}' "${wDir}/getesd.out")
 		esdName=$(basename "$esdName")
 		return 0
 	else
