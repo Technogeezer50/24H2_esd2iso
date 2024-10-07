@@ -19,8 +19,8 @@ So... here's the other way.
 
 ## Installation and Use 
 
-* Download this project from GitHub https://github.com/Technogeezer50/24H2_esd2iso. The latest released version
-zipfile can be found in the "Releases" section on the right hand side of the project page. You can download either
+* Download this project from GitHub: https://github.com/Technogeezer50/24H2_esd2iso. The latest released version
+can be found in the "Releases" section on the right hand side of the project page. You can download either
 the .zip or .tar.gz format file.
 * Extract the downloaded file.
 * Move or copy the file 24H2_esd2iso to a location of your choice (preferably an empty folder where you will build your ISO)
