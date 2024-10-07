@@ -19,8 +19,10 @@ So... here's the other way.
 
 ## Installation and Use 
 
-* Download this project from GitHub using the "<>Code" button, and selecting "Download ZIP" from the pull-down.
-* Unzip the downloaded ZIP file.
+* Download this project from GitHub https://github.com/Technogeezer50/24H2_esd2iso. The latest released version
+zipfile can be found in the "Releases" section on the right hand side of the project page. You can download either
+the .zip or .tar.gz format file.
+* Extract the downloaded file.
 * Move or copy the file 24H2_esd2iso to a location of your choice (preferably an empty folder where you will build your ISO)
 * Open the macOS Terminal app, and cd to the empty folder.
 * Change permissions on 24H2_esd2iso to make it executable (it does not require root permissions).
