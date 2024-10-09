@@ -16,7 +16,7 @@
 # 
 
 
-readonly versionID="v1.0.1 (20241007)"
+readonly versionID="v1.0.2 (20241008)"
 readonly version="24H2_esd2iso ${versionID}\n"
 readonly minDiskSpace=10
 
@@ -182,10 +182,11 @@ setupEsdDownload(){
 				;;
 		esac
 	done
-echo -e "Getting info on ESD from Microsoft"
+	echo
+	echo -e "Getting info on ESD from Microsoft"
 	"${utilPath}" getesdurl --edition "${editionName}" --lang ${esdLang} | tee "${wDir}/geturl.out"
 	if grep -q  SUCCESS "${wDir}/geturl.out"; then
-	    shaHash=$(awk '/^SHA1/ {print $3}' "${wDir}"/geturl.out)
+	    shaHash=$(awk '/^SHA1/ {print $3}' "${wDir}/geturl.out")
 	    return 0
 	else
 		return 2
@@ -197,11 +198,12 @@ downloadEsd() {
 	#---------------
 	# Download the ESD from Microsoft
 	#---------------
+	echo
 	echo -e "Downloading ESD from Microsoft"
-	"${utilPath}" getesd --edition ${editionName} --lang ${esdLang} | tee ${wDir}/getesd.out
+	"${utilPath}" getesd --edition ${editionName} --lang ${esdLang} | tee "${wDir}/getesd.out"
 	if grep -q  SUCCESS "${wDir}/getesd.out"; then
-		esdName=$(awk '/^ESD:/ {print $2}' "${wDir}/getesd.out")
-		esdName=$(basename "$esdName")
+		esdName=$(grep "^ESD:" "${wDir}/getesd.out" | sed 's/^ESD:[ \t]*//')
+		# esdName=$(basename "${esdName}")
 		return 0
 	else
 		return 1
@@ -210,8 +212,9 @@ downloadEsd() {
 
 
 buildIso(){
+	echo
 	echo -e "Building ISO"
-	"${utilPath}" generateiso --esd ./"${esdName}" --drivers="${wDir}/vmxnet3" | tee ${wDir}/generateiso.out
+	"${utilPath}" generateiso --esd "${esdName}" --drivers="${wDir}/vmxnet3" | tee "${wDir}/generateiso.out"
 	if grep -q  SUCCESS "${wDir}/generateiso.out"; then
 		return 0
 	else
@@ -314,8 +317,10 @@ if (( $retVal != 0 )); then
 fi
 	
 
+echo
 echo -e "Validating download (this may take a minute or so)"
-calcHash=$(shasum "./${esdName}" | awk '{print $1}')
+#calcHash=$(shasum "./${esdName}" | awk '{print $1}')
+calcHash=$(shasum "${esdName}" | awk '{print $1}')
 if [[ ${calcHash} != ${shaHash} ]]; then 
 	rm -rf "${wDir}"
     abortProg 1 "ESD validation" "Expected hash = ${shaHash}\n\tCalculated hash = ${calcHash}"
@@ -337,11 +342,11 @@ retVal=$?
 if (( $retVal != 0 )); then
 	chmod 755 "${wDir}/vmxnet3"
 	rm -rf "${wDir}" 
-    abortProg 1 "ISO build" "\tvmw_esd2iso geturl didn't complete successfully'"
+    abortProg 1 "ISO build" "vmw_esd2iso buildiso didn't complete successfully'"
 fi
 echo -e "\nCleaning up..."
 chmod 755 "${wDir}/vmxnet3"
 rm -rf "${wDir}"
-rm -rf "./${esdName}"
+rm -rf "${esdName}"
 echo -e "All done!"
 exit 0
