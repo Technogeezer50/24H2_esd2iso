@@ -2,15 +2,16 @@
 
 ## What is 24H2_esd2iso?
 
-24H2_esd2iso is a utility to automate the creation of Windows 11 ARM 24H2 installation ISOs for use with VMware Fusionon on Apple Silicon Macs.
+24H2_esd2iso is a utility to automate the creation of Windows 11 ARM 24H2 installation ISOs for use with VMware Fusion
+on on Apple Silicon Macs.
 This utility uses command line tools found in VMware Fusion 13.5 and later to download an ESD file from Microsoft and create the
 installation ISO. 
 
-It was born out of necessity for users of VMware Fusion on Apple Silicon Macs. Windows 11 24H2 broke
-Fusion's routines to "Get Windows from Microsoft". Another way had to be found to easily
-download Windows until VMware fixes the issue. 
-
-So... here's the other way.
+> [NOTE!]
+> VMware Fusion 13.6.1 fixed issues relating to the download of Windows 11 24H2 and proper creation of the ISO when
+> using the "Get Windows from Microsoft" feature. This utility is no longer required as a workaround for
+> problems found in VMware Fusion 13.6.0 and earlier. It remains available for those of you that want to automate the
+> steps needed to download Windows 11 24H2 ARM ISOs from the macOS Terminal app (UNIX shell).
 
 ## Prerequisites 
 
