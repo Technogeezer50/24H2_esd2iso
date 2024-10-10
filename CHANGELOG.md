@@ -1,5 +1,10 @@
 # Change Log for 24H2_esd2iso
 
+## Version 1.0.3
+
+Documentation change only. README.md updated to reflect the release of VMware Fusion 13.6.1, which 
+fixes the issues that made this utility necessary.
+
 ## Version 1.0.2
 
 Fixed bugs relating to the handling of working directories that have spaces in the file name.
