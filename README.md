@@ -7,7 +7,7 @@ on on Apple Silicon Macs.
 This utility uses command line tools found in VMware Fusion 13.5 and later to download an ESD file from Microsoft and create the
 installation ISO. 
 
-> [NOTE]
+> [!NOTE]
 > VMware Fusion 13.6.1 fixed issues relating to the download of Windows 11 24H2 and proper creation of the ISO when
 > using the "Get Windows from Microsoft" feature. This utility is no longer required as a workaround for
 > problems found in VMware Fusion 13.6.0 and earlier. It remains available for those of you that want to automate the
