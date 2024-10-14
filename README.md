@@ -35,8 +35,8 @@ the .zip or .tar.gz format file.
 (and their servers have been a bit flaky lately), you should remove the partially downloaded ESD file if it exists before
 rerunning the command.
 
-Sorry, but there's no "restart interrupted network transfers from the point of failure" available for 24H2_esd2iso
-like there is for w11arm_esd2iso. If the transfer doesn't complete, you'll need to wait for the entire ESD 
+Sorry, but there's no "restart interrupted network transfers from the point of failure" available for 24H2_esd2iso.
+If the transfer doesn't complete, you'll need to wait for the entire ESD 
 file to download again. Trying to keep things simple and not require open source utilities (such as 
 aria2) means that the restart capability isn't available. 
 
@@ -52,6 +52,8 @@ Both have some similar heritage (and needs for their existence). The big differe
   Windows Setup process.
 * 24H2_esd2iso only works on Apple Silicon Macs. w11arm_esd2iso works on Macs and Linux (both Intel
   and ARM architectures).
+* 24H2_esd2iso has no ability to restart interrupted downloads. w11arm_esd2iso uses a different utility for downloading from Microsoft,
+  and can restart interrupted network transfers from the point of failure -- preserving what's been downloaaded already.
 
 ## Licensing
 
